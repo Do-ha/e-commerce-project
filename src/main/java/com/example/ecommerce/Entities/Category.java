@@ -21,4 +21,6 @@ public class Category {
     private Boolean active;
     @OneToMany(mappedBy = "category")
     private List<Subcategory> subCategories;
+    @OneToMany(fetch = FetchType.EAGER)
+  private List<Product>products;
 }

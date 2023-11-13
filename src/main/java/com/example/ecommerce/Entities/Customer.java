@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.util.Date;
 import java.util.List;
@@ -22,7 +23,10 @@ public class Customer {
     private String lastName;
     private String email;
     private String password;
+
+    @CreationTimestamp
     private Date creationDate;
+
     private Date lastLogIn;
     private Boolean validAccount;
     private Boolean active;

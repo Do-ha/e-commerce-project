@@ -25,21 +25,23 @@ public class Product {
     private String sku;
     private String productImage;
     private String productName;
-    private Long subCategoryId;
     private String shortDescription;
     private String longDescription;
     private Double price;
     private Double discountPrice;
-//    private Array<> options;
+  private List<String> options;
     private Boolean active;
-    @ManyToMany
+    //aded this
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "product_order",
             joinColumns = @JoinColumn(name = "product_id"),
             inverseJoinColumns = @JoinColumn(name = "order_id"))
     private List<Order> orders;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     private  Subcategory subcategory;
+    @ManyToOne(fetch = FetchType.EAGER)
+    Category category;
 
 }

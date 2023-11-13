@@ -21,6 +21,7 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String customerId;
+
     @ManyToMany(mappedBy = "orders")
     private List<Product> products;
     private Date orderDate;
