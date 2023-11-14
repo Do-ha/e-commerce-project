@@ -11,6 +11,7 @@ import com.example.ecommerce.Services.ProductService;
 import com.example.ecommerce.mappers.ProductMapper;
 import lombok.AllArgsConstructor;
 import org.springframework.boot.autoconfigure.data.web.SpringDataWebProperties;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -37,61 +38,39 @@ public class ProductController {
   private ProductService productService;
   @GetMapping("/products")
 
-  public List<ProductDto> getAllProducts(
+  public ResponseEntity<List<ProductDto>> getAllProducts(
+
     @RequestParam(name = "page", defaultValue = "1") int page,
     @RequestParam(name = "limit", defaultValue = "10") int limit
   ) {
-    // Use PageRequest for pagination
-    Pageable pageable = PageRequest.of(page , limit);
-
-    // Use findAll with pageable directly
-    Page<Product> productPage = productRepository.findAll(pageable);
-    return productPage.getContent().stream()
-      .map(ProductMapper::mapProductToDTO)
-      .collect(Collectors.toList());
+    return ResponseEntity.ok(productService.getAllProducts(page, limit));
+  }
 
 
+@GetMapping("/products/{id}")
+public ResponseEntity<ProductDto> getProductById(@PathVariable("id") Long id) {
+    return ResponseEntity.ok(productService.getProductById(id));
 }
 
-
-  @GetMapping("/products/{id}")
-  public Optional<Product> getProductById(@PathVariable("id") Long id){
-    return this.productRepository.findById(id);
-  }
   @PutMapping("/products/{id}")
   public Product updateProduct (@PathVariable("id") Long id, @RequestBody Product product){
     return this.productService.update(product, id);
   }
 @DeleteMapping("/products/{id}")
-  public Product deleteProduct(@PathVariable("id") Long id, @RequestBody Product product){
-    return this.productService.DeleteProduct(product,id);
+  public ProductDto deleteProduct(@PathVariable("id") Long id, @RequestBody ProductDto productDto){
+    return this.productService.DeleteProduct(productDto,id);
 }
 @PostMapping("/products")
-  public ResponseEntity<Product> addProduct(@RequestBody Product product ){
-     this.productRepository.save(product);
-     return new ResponseEntity<>(product, HttpStatus.CREATED);
+  public ResponseEntity<?> addProduct(@RequestBody ProductDto productDto ){
+    return ResponseEntity.ok(productService.addProduct(productDto));
 }
   @GetMapping("/search")
-  public List<ProductDto> searchProducts(
+  public ResponseEntity<List<ProductDto>> searchProducts(
     @RequestParam(name = "page", defaultValue = "1") int page,
     @RequestParam(name = "limit", defaultValue = "10") int limit,
     @RequestParam(name = "query", required = false) String query) {
+return ResponseEntity.ok(productService.searchProducts(page, limit, query));
 
-    // Use PageRequest for pagination
-    Pageable pageable = PageRequest.of(page , limit); // Adjust page to be zero-indexed
-
-    // Use findAll or findByProductName with pageable directly
-    Page<Product> productPage;
-    if (query != null && !query.isEmpty()) {
-      productPage = productRepository.findByProductName(query, pageable);
-    } else {
-      productPage = productRepository.findAll(pageable);
-    }
-
-    // Transform products to a List of DTOs using stream and map
-    return productPage.getContent().stream()
-      .map(ProductMapper::mapProductToDTO)
-      .collect(Collectors.toList());
   }
 
 

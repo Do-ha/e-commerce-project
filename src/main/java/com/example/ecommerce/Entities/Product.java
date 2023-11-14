@@ -24,12 +24,14 @@ public class Product {
     private Long id;
     private String sku;
     private String productImage;
+    @Column(unique = true)
     private String productName;
     private String shortDescription;
     private String longDescription;
     private Double price;
     private Double discountPrice;
   private List<String> options;
+  private boolean duplicated;
     private Boolean active;
     //aded this
     @ManyToMany(fetch = FetchType.EAGER)
