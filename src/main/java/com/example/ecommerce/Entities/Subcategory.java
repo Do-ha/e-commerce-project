@@ -1,4 +1,5 @@
 package com.example.ecommerce.Entities;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 
 import jakarta.persistence.Entity;
@@ -22,6 +23,7 @@ public class Subcategory {
 //    @Column(name = "categoryId")
     private Boolean active;
     @ManyToOne
+    @JsonIgnoreProperties({"subCategories"})
     private Category category;
 
     @OneToMany

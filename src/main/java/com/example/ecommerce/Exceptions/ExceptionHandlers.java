@@ -18,7 +18,7 @@ public class ExceptionHandlers {
   }
   @ExceptionHandler(EntityNotFoundException.class)
   public ResponseEntity<?> handleNotFoundException(EntityNotFoundException e) {
-    return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Not found");
+    return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
   }
 
 }
