@@ -1,6 +1,7 @@
 package com.example.ecommerce.DTOs;
 
 public record CategoryDto(
- String categoryName
+        Long id,
+        String categoryName
 ) {
 }

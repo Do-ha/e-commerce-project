@@ -5,6 +5,7 @@ import com.example.ecommerce.DTOs.ProductDto;
 import com.example.ecommerce.Entities.Category;
 import com.example.ecommerce.Entities.Product;
 import com.example.ecommerce.Repositories.CategoryRepository;
+import com.example.ecommerce.Repositories.ProductRepository;
 import com.example.ecommerce.mappers.CategoryMapper;
 import com.example.ecommerce.mappers.ProductMapper;
 import jakarta.persistence.EntityNotFoundException;
@@ -12,8 +13,6 @@ import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -25,53 +24,72 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class CategoryService {
 
-  private CategoryRepository categoryRepository;
+    private CategoryRepository categoryRepository;
 
-  public CategoryDto addCategory(CategoryDto categoryDto) {
 
-    return CategoryMapper.mapEntityToDto(categoryRepository.save(CategoryMapper.mapDtoToEntity(categoryDto)));
+
+    public List<CategoryDto> getAllCategories(
+            @RequestParam(name = "page", defaultValue = "1") int page,
+            @RequestParam(name = "limit", defaultValue = "10") int limit) {
+
+        {
+            // Use PageRequest for pagination
+            Pageable pageable = PageRequest.of(page, limit);
+
+            // Use findAll with pageable directly
+            Page<Category> categoryPage = categoryRepository.findAll(pageable);
+            if(categoryPage.hasContent()){
+                return categoryPage.getContent().stream()
+                        .map(CategoryMapper::mapEntityToDto)
+                        .collect(Collectors.toList());
+            }
+            else{ throw new EntityNotFoundException("Category not found");
+    }
+}}
+
+    public CategoryDto getCategoryById(Long id) {
+        Optional<Category> categoryOptional = categoryRepository.findById(id);
+
+        if (categoryOptional.isPresent()) {
+            CategoryDto categoryDto = CategoryMapper.mapEntityToDto(categoryOptional.get());
+            return categoryDto ;
+        }
+        else {
+            throw new EntityNotFoundException("Category not found");
+        }}
+    public List<CategoryDto> searchCategories(int page,int limit,String query) {
+
+        // Use PageRequest for pagination
+        Pageable pageable = PageRequest.of(page , limit); // Adjust page to be zero-indexed
+
+        // Use findAll or findByProductName with pageable directly
+        Page<Category> categoryPage;
+        if (query != null || !query.isEmpty()) {
+            System.out.println(query);
+            categoryPage = categoryRepository.findByCategorytName(query, pageable);
+        } else {
+            System.out.println("non");
+            categoryPage = categoryRepository.findAll(pageable);
+        }
+
+        return categoryPage.getContent().stream()
+                .map(CategoryMapper::mapEntityToDto)
+                .collect(Collectors.toList());
 
 }
-
-  public CategoryDto updateCategory(CategoryDto updatedCategoryDto, Long id) {
-    Optional<Category> categoryToUpdateOptional = this.categoryRepository.findById(id);
-
-    if (!categoryToUpdateOptional.isPresent()) {
-      return null;
-    }
-
-    Category categoryToUpdate = categoryToUpdateOptional.get();
-
-    if (updatedCategoryDto.categoryName() != null) {
-      categoryToUpdate.setCategoryName(updatedCategoryDto.categoryName());
-    }
-//    if (updatedCategoryDto.active() != null) {
-//      productToUpdate.setActive(!updatedProductDto.active());
-//    }
-//    if (updatedCategoryDto.subCategories()!=null){
-//      categoryToUpdate.setSubCategories(updatedCategoryDto.subCategories());
-//
-//    }
+    public CategoryDto DeleteCategory( Long id) {
+        Optional<Category> categoryTodeleteOptional = this.categoryRepository.findById(id);
 
 
-    Category updatedCategory = this.categoryRepository.save(categoryToUpdate);
-
-    // Map the updated product to a ProductDto and return it
-    return CategoryMapper.mapEntityToDto(updatedCategory);
-  }
-
-  public List<CategoryDto> getAllCategories(  int page, int limit) {
-    // Use PageRequest for pagination
-    Pageable pageable = PageRequest.of(page, limit);
-
-    // Use findAll with pageable directly
-    Page<Category> categoryPage = categoryRepository.findAll(pageable);
-      return categoryPage.getContent().stream()
-        .map(CategoryMapper::mapEntityToDto)
-        .collect(Collectors.toList());
-
-
-  }
-
-
-}
+        if (categoryTodeleteOptional.isEmpty()) {
+           throw new EntityNotFoundException("Category with id " + id +" not found");
+        }
+        Category categoryTodelete = categoryTodeleteOptional.get();
+        if (categoryTodelete.getSubCategories().isEmpty()) {
+            this.categoryRepository.delete(categoryTodelete);
+            return CategoryMapper.mapEntityToDto(categoryTodelete);
+        }
+        else {
+            throw new EntityNotFoundException("Category with id " + id + " has attached subcategories and cannot be deleted.");
+        }
+    }}
