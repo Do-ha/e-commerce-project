@@ -3,16 +3,13 @@ package com.example.ecommerce.Entities;
 import com.example.ecommerce.Repositories.CategoryRepository;
 import com.example.ecommerce.Repositories.SubCategoryRepository;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.List;
 import java.util.Optional;
 
 @Entity
-@Data
+@Getter @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
@@ -20,6 +17,7 @@ public class Category {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @Column(unique = true)
     private String categoryName;
     private Boolean active = false;
     @OneToMany(mappedBy = "category")

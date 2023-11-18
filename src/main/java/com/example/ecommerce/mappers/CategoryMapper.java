@@ -8,7 +8,8 @@ public class CategoryMapper {
     return new CategoryDto(
       category.getId(),
       category.getCategoryName(),
-      category.getSubCategories()
+      category.getActive()
+//      category.getSubCategories()
     );
   }
   public static Category mapDtoToEntity(CategoryDto categoryDto)
@@ -16,7 +17,10 @@ public class CategoryMapper {
     Category category=new Category();
     category.setId(categoryDto.id());
     category.setCategoryName(categoryDto.categoryName());
-  return category;
+    category.setActive(categoryDto.active());
+//    category.setSubCategories(categoryDto.subCategories());
+    return category;
   }
+
 }
 

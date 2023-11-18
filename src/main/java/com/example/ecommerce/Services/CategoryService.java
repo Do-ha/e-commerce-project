@@ -13,6 +13,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -25,9 +26,35 @@ import java.util.stream.Collectors;
 public class CategoryService {
 
     private CategoryRepository categoryRepository;
+  public CategoryDto addCategory(CategoryDto categoryDto){
+    return CategoryMapper.mapEntityToDto(categoryRepository.save(CategoryMapper.mapDtoToEntity(categoryDto)));
+  }
 
 
+  public CategoryDto updateCategory(CategoryDto updatedCategoryDto, Long id) {
+    Optional<Category> categoryToUpdateOptional = this.categoryRepository.findById(id);
 
+    if (!categoryToUpdateOptional.isPresent()) {
+      // Product not found, handle accordingly (return null or throw an exception)
+      return null;
+    }
+
+    Category categoryToUpdate = categoryToUpdateOptional.get();
+
+    // Update attributes based on the provided ProductDto
+    if (updatedCategoryDto.categoryName() != null) {
+      categoryToUpdate.setCategoryName(updatedCategoryDto.categoryName());
+    }
+//    if (updatedCategoryDto.getSubCategories() != null) {
+//      // Correct the update for subCategories
+//      categoryToUpdate.setSubCategories(updatedCategoryDto.getSubCategories());
+//    }
+
+    Category updatedCategory = this.categoryRepository.save(categoryToUpdate);
+
+    // Map the updated product to a ProductDto and return it
+    return CategoryMapper.mapEntityToDto(updatedCategory);
+  }
     public List<CategoryDto> getAllCategories(
             @RequestParam(name = "page", defaultValue = "1") int page,
             @RequestParam(name = "limit", defaultValue = "10") int limit) {

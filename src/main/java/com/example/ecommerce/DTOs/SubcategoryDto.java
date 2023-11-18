@@ -6,7 +6,11 @@ public record SubcategoryDto(
  Long id,
   String subCategoryName,
    CategoryDto category
+// Boolean active
+
+// String categoryName
 
 
-) {
+
+ ) {
 }

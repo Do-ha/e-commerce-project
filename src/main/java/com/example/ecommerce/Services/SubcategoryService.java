@@ -24,6 +24,40 @@ import java.util.stream.Collectors;
 public class SubcategoryService{
 private SubCategoryRepository subCategoryRepository;
 
+  public SubcategoryDto addsubcategory(SubcategoryDto subcategoryDto){
+      Subcategory subcategory = subCategoryRepository.save(SubcategoryMapper.mapDtoToEntity(subcategoryDto));
+
+      System.out.println(subcategory);
+
+      return SubcategoryMapper.mapEntityToDto(subcategory);
+  }
+
+
+  public SubcategoryDto updateSubcategory(SubcategoryDto updatedSubcategoryDto, Long id) {
+    Optional<Subcategory> subcategoryToUpdateOptional = this.subCategoryRepository.findById(id);
+
+    if (!subcategoryToUpdateOptional.isPresent()) {
+      // Product not found, handle accordingly (return null or throw an exception)
+      return null;
+    }
+
+    Subcategory subcategoryToUpdate = subcategoryToUpdateOptional.get();
+
+    // Update attributes based on the provided ProductDto
+    if (updatedSubcategoryDto.subCategoryName() != null) {
+      subcategoryToUpdate.setSubCategoryName(updatedSubcategoryDto.subCategoryName());
+    }
+//    if (updatedCategoryDto.getSubCategories() != null) {
+//      // Correct the update for subCategories
+//      categoryToUpdate.setSubCategories(updatedCategoryDto.getSubCategories());
+//    }
+
+    Subcategory updatedSubcategory = this.subCategoryRepository.save(subcategoryToUpdate);
+
+    // Map the updated product to a ProductDto and return it
+    return SubcategoryMapper.mapEntityToDto(updatedSubcategory);
+  }
+
     public List<SubcategoryDto> getAllSubcategories(
             @RequestParam(name = "page", defaultValue = "0") int page,
             @RequestParam(name = "limit", defaultValue = "10") int limit)

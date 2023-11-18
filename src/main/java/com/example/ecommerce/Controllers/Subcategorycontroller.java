@@ -17,6 +17,10 @@ import java.util.List;
 public class Subcategorycontroller {
 private SubCategoryRepository subCategoryRepository;
 private SubcategoryService subcategoryService;
+  @PostMapping("/subcategories")
+  public ResponseEntity<?>addSubcategory(@RequestBody SubcategoryDto subcategoryDto){
+    return ResponseEntity.ok(subcategoryService.addsubcategory(subcategoryDto));
+  }
 
     @GetMapping("/subcategories")
     public ResponseEntity<List<SubcategoryDto>> getALLSubcategory(
@@ -32,10 +36,10 @@ private SubcategoryService subcategoryService;
     }
     @GetMapping("/subcategories/search")
     public ResponseEntity<List<SubcategoryDto>> searchSubcategories(
-            @RequestParam(name = "page", defaultValue = "1") int page,
+            @RequestParam(name = "page", defaultValue = "0") int page,
             @RequestParam(name = "limit", defaultValue = "10") int limit,
             @RequestParam(name = "query", required = false) String query) {
-        return ResponseEntity.ok(subcategoryService.searchSubcategories(page, limit, query));
+        return ResponseEntity.ok(subcategoryService.searchSubcategories(page , limit, query));
     }
     @DeleteMapping("/subcategories/{id}")
     public SubcategoryDto deleteSubcategory(@PathVariable("id") Long id){

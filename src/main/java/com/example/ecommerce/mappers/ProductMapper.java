@@ -19,6 +19,7 @@ public class ProductMapper {
       product.getActive(),
 //      product.getSubcategory().getSubCategoryName()
       (product.getSubcategory() != null) ? product.getSubcategory().getSubCategoryName() : null
+//             SubcategoryMapper.mapEntityToDto(product.getSubcategory())
 
     );
   }

@@ -20,7 +20,7 @@ Long id,
   List<String> options,
   Boolean active,
   String subcategoryName
-
+//SubcategoryDto subcategory
 
 ) {
 }

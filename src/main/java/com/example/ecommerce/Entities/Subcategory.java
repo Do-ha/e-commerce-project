@@ -3,15 +3,12 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 
 import jakarta.persistence.Entity;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.List;
 
 @Entity
-@Data
+@Getter @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
@@ -22,7 +19,8 @@ public class Subcategory {
     private String subCategoryName;
 //    @Column(name = "categoryId")
     private Boolean active;
-    @ManyToOne
+
+    @ManyToOne(fetch = FetchType.EAGER)
     @JsonIgnoreProperties({"subCategories"})
     private Category category;
 
